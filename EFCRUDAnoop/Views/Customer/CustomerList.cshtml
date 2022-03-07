@@ -1,0 +1,26 @@
+﻿@model IEnumerable<EFCRUDAnoop.Models.Customer>
+
+
+
+            
+<h2>Customer Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+
+    </tr>
+
+    @foreach (var customer in Model)
+    {
+        <tr>
+            <td>@customer.Name</td>
+            <td>@customer.Email</td>
+            <td>@customer.Mobile</td>
+
+        </tr>
+    }
+       
+</table>
