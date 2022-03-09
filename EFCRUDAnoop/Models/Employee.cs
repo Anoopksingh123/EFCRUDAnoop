@@ -28,5 +28,6 @@ namespace EFCRUDAnoop.Models
         [Display(Name = "Employee Address")]
         [Required(ErrorMessage = "Employee Address can't be Empty")]
         public string Addreess { get; set; }
+        public string Images { get;  set; }
     }
 }

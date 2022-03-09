@@ -4,15 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EFCRUDAnoop.Models;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace EFCRUDAnoop.Controllers
 {
     public class EmployeeController : Controller
     {
         private ApplicationDbContext dbContext;
-        public EmployeeController(ApplicationDbContext dbContext)
+        private IHostingEnvironment Environment;
+
+        public EmployeeController(ApplicationDbContext dbContext,IHostingEnvironment environment)
         {
             this.dbContext = dbContext;
+            Environment = environment;
         }
 
         public IActionResult Index()
@@ -27,27 +32,64 @@ namespace EFCRUDAnoop.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Employee emp)
+        //public IActionResult Create(Employee emp)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        dbContext.Employees.Add(emp);
+        //        dbContext.SaveChanges();
+        //        return RedirectToAction("index");
+        //    }
+        //    else
+        //    {
+        //        return View(emp);
+        //    }
+        //}
+
+        public IActionResult Create(Employee M )
         {
-            if (ModelState.IsValid)
+           if (ModelState.IsValid)
             {
+                string name = Request.Form["Name"];
+                string email = Request.Form["Email"];
+                string mobile = Request.Form["Mobile"];
+                string addreess = Request.Form["Addreess"];
+                var files = Request.Form.Files;
+                string dbpath = string.Empty;
+                
+                if (files.Count > 0)
+                {
+                    var file = files[0];
+                    string path = Environment.WebRootPath;
+                    string fullpath =Path.Combine(path, "Images", file.FileName);
+                    FileStream stream = new FileStream(fullpath, FileMode.Create);
+                    file.CopyTo(stream);
+                    dbpath = file.FileName;
+                }
+                var emp = new Employee()
+                {
+                    Name = name,
+                    Email = email,
+                    Mobile = mobile,
+                    Addreess = addreess ,
+                    Images = dbpath,
+                };
                 dbContext.Employees.Add(emp);
                 dbContext.SaveChanges();
                 return RedirectToAction("index");
             }
             else
             {
-                return View(emp);
+                return View();
             }
         }
-
         public IActionResult Update(int id)
         {
             var DbCheckEmp = dbContext.Employees.SingleOrDefault(e => e.Id == id);
             return View(DbCheckEmp);
         }
         [HttpPost]
-        public IActionResult(Employee emp)
+        public IActionResult Update(Employee emp)
         {
             dbContext.Employees.Update(emp);
             dbContext.SaveChanges();
